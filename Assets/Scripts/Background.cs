@@ -1,33 +1,61 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class Background : MonoBehaviour
 {
-    public float speed;
-    public Transform bg1;
-    public Transform bg2;
+    public float speed1;
+	public float speed2;
 
-    private Bounds bgBounds;
+	public Transform nebula1;
+    public Transform nebula2;
+	public Transform stars1;
+	public Transform stars2;
+	public Transform stars3;
+	public Transform stars4;
+	public Transform planet1;
+	public Transform planet2;
+	public Transform planet3;
+	public BoxCollider2D spawnBox;
+
+	private Bounds spawnBounds;
+	private float bgHeight;
 
     private void Awake()
     {
-        bgBounds = bg1.gameObject.GetComponent<Renderer>().bounds;
-    }
+		bgHeight = nebula1.gameObject.GetComponent<Renderer>().bounds.size.y;
+		spawnBounds = spawnBox.bounds;
+	}
 
     public void OnTriggerExit2D(Collider2D collision)
     {
         var target = collision.transform;
-        if (target == bg1 || target == bg2)
+        if (collision.CompareTag("Background"))
         {
-            var pos = new Vector3(0, bgBounds.size.y * 2, 0);
+            var pos = new Vector3(0, bgHeight * 2, 0);
             target.position += pos;
         }
-    }
+		else if (collision.CompareTag("Planet"))
+		{
+			float randomX = Random.Range(spawnBounds.min.x, spawnBounds.max.x);
+			float randomY = Random.Range(spawnBounds.min.y, spawnBounds.max.y);
+			Vector2 randomPoint = new Vector2(randomX, randomY);
+			target.position = randomPoint;
+		}
+	}
 
     void Update()
     {
-        bg1.position += Vector3.down * speed * Time.deltaTime;
-        bg2.position += Vector3.down * speed * Time.deltaTime;
-    }
+		nebula1.position += Vector3.down * speed1 * Time.deltaTime;
+		nebula2.position += Vector3.down * speed1 * Time.deltaTime;
+		stars1.position += Vector3.down * speed2 * Time.deltaTime;
+		stars2.position += Vector3.down * speed2 * Time.deltaTime;
+		stars3.position += Vector3.down * speed1 * Time.deltaTime;
+		stars4.position += Vector3.down * speed1 * Time.deltaTime;
+		planet1.position += Vector3.down * speed2 * Time.deltaTime;
+		planet2.position += Vector3.down * speed2 * Time.deltaTime;
+		planet3.position += Vector3.down * speed2 * Time.deltaTime;
+	}
 }
