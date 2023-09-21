@@ -1,5 +1,7 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -17,12 +19,14 @@ public class Enemy : MonoBehaviour
 	public float yOffset;
 	private float duration;
 	public float moveDuration;
+	public CinemachineSmoothPath path;
 
 
 	private int hp;
 	private float timer;
 	private float timer2;
 	private Rigidbody2D rb2D;
+	private float soothPos;
 
 	public Transform SpawnPos { get; set; }
 	public Transform MiddlePos { get; set; }
@@ -37,21 +41,31 @@ public class Enemy : MonoBehaviour
 	{
 		hp = maxHp;
 		duration = Random.Range(launchTimeMin, launchTimeMax);
+
+		soothPos = 0;
 	}
 
 	private void FixedUpdate()
 	{
-		timer2 += Time.deltaTime;
-		float t = timer2 / moveDuration;
-		if (t > 1)
+		//timer2 += Time.deltaTime;
+		//float t = timer2 / moveDuration;
+		//if (t > 1)
+		//{
+		//	Destroy(gameObject);
+		//	SpawnManager.enemyCounter--;
+		//}
+
+		//Vector2 enemyPos = CalculateBezierPoint(SpawnPos.position, MiddlePos.position, TargetPos.position, t);
+		//rb2D.MovePosition(enemyPos);
+		//transform.position = enemyPos;
+
+		soothPos += speed * Time.deltaTime;
+		if (soothPos > path.MaxPos)
 		{
 			Destroy(gameObject);
 			SpawnManager.enemyCounter--;
 		}
-
-		Vector2 enemyPos = CalculateBezierPoint(SpawnPos.position, MiddlePos.position, TargetPos.position, t);
-		rb2D.MovePosition(enemyPos);
-		//transform.position = enemyPos;
+		rb2D.transform.position = path.EvaluateLocalPosition(soothPos);
 	}
 
 	void Update()

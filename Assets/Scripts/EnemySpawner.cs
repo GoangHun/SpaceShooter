@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,11 +14,15 @@ public class EnemySpawner : MonoBehaviour
 
 	private float timer;
 	private int count = 1;
+
+	public CinemachineSmoothPath smoothPath;
+
 	void Update()
     {
 		if (isSpawn)
 		{
-			SpawnEnemy();
+			//SpawnEnemy();
+			NewSpawnEnemy();
 		}
 	}
 
@@ -41,5 +46,26 @@ public class EnemySpawner : MonoBehaviour
 			count = 0;
 		}
 	}
-	
+
+	public void NewSpawnEnemy()
+	{
+		timer += Time.deltaTime;
+		if (timer > duration)
+		{
+			timer = 0;
+			count++;
+			var go = Instantiate(enemy, smoothPath.m_Waypoints[0].position, Quaternion.identity);
+			go.path = smoothPath;
+			SpawnManager.enemyCounter++;
+		}
+
+		if (count > spawnCount)
+		{
+			isSpawn = false;
+			count = 0;
+		}
+	}
+
+
+
 }
